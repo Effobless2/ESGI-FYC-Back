@@ -22,7 +22,7 @@ public class UserDAO extends JdbcDaoSupport implements IUserDAO{
     @Override
     public void saveUser(User user) {
 
-        final String USER_INSERT = "insert into users (login, password, prenom, nom, email, role) values (?,?,?,?,?,?)";
+        final String USER_INSERT = "insert into users (login, password, firstName, LastName, email, role) values (?,?,?,?,?,?)";
 
         getJdbcTemplate().update(USER_INSERT,
                 user.getLogin(),
