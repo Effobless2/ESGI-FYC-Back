@@ -1,6 +1,7 @@
 package fr.esgi.fyc.services;
 
-import fr.esgi.fyc.DAO.IUserDAO;
+import fr.esgi.fyc.persistence.DAO.IUserDAO;
+import fr.esgi.fyc.DTO.UserGetDTO;
 import fr.esgi.fyc.domain.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,8 @@ public class UserService {
         iUserDAO.saveUser(user);
     }
 
-    public User getByEmail(String email) { return iUserDAO.SelectUserByEmail(email); }
+    public UserGetDTO getByEmail(String email) { return iUserDAO.SelectUserByEmail(email); }
 
-    public User getById(Integer id) { return iUserDAO.SelectUserById(id); }
+    public UserGetDTO getById(Integer id) { return iUserDAO.SelectUserById(id); }
 
 }

@@ -1,6 +1,7 @@
 package fr.esgi.fyc.controllers;
 
 import fr.esgi.fyc.DTO.UserCreateDTO;
+import fr.esgi.fyc.DTO.UserGetDTO;
 import fr.esgi.fyc.domain.model.User;
 import fr.esgi.fyc.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
@@ -34,10 +35,9 @@ public class UserController {
                 .body("SUCCESS : User create");
     }
 
-    @GetMapping("/id")
-    public ResponseEntity<User> getById(HttpServletRequest request, @Validated Integer id){
-
-        User user = userService.getById(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<UserGetDTO> getById(HttpServletRequest request, @PathVariable("id") int id){
+        UserGetDTO user = userService.getById(id);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

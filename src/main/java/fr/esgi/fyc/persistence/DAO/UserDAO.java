@@ -1,6 +1,8 @@
-package fr.esgi.fyc.DAO;
+package fr.esgi.fyc.persistence.DAO;
 
+import fr.esgi.fyc.DTO.UserGetDTO;
 import fr.esgi.fyc.domain.model.User;
+import fr.esgi.fyc.persistence.parsers.UserRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
@@ -35,21 +37,15 @@ public class UserDAO extends JdbcDaoSupport implements IUserDAO{
     }
 
     @Override
-    public User SelectUserByEmail(String email){
+    public UserGetDTO SelectUserByEmail(String email){
         final String USER_GET_BY_EMAIL = "SELECT id, login, firstName, LastName, email, role FROM users AS u WHERE u.email = ?";
-
-        User user = getJdbcTemplate().queryForObject(USER_GET_BY_EMAIL, new Object[]{email}, User.class);
-
-        return user;
+        return getJdbcTemplate().queryForObject(USER_GET_BY_EMAIL, new Object[]{email}, new UserRowMapper());
     }
 
     @Override
-    public User SelectUserById(Integer id){
+    public UserGetDTO SelectUserById(Integer id){
         final String USER_GET_BY_ID = "SELECT id, login, firstName, LastName, email, role FROM users AS u WHERE u.id = ?";
-
-        User user = getJdbcTemplate().queryForObject(USER_GET_BY_ID, new Object[]{id}, User.class);
-
-        return user;
+        return getJdbcTemplate().queryForObject(USER_GET_BY_ID, new Object[]{id}, new UserRowMapper());
     }
 
 }
