@@ -23,4 +23,6 @@ public class UserService {
 
     public User getByEmail(String email) { return iUserDAO.selectUserByEmail(email); }
 
+    public int updateUser(User user) { return  iUserDAO.updateUser(user); }
+
 }

@@ -55,7 +55,7 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
         try{
             return getJdbcTemplate().queryForObject(USER_GET_BY_ID, new Object[]{id}, new UserRowMapper());
         }catch (EmptyResultDataAccessException e) {
-            System.out.println(e);
+            System.out.println("ERROR IN USERDAO.SELECT_USER_BY_ID : " + e);
             return null;
         }
     }
@@ -66,8 +66,25 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
         try{
             return getJdbcTemplate().queryForObject(USER_GET_BY_EMAIL, new Object[]{email}, new UserRowMapper());
         }catch (EmptyResultDataAccessException e) {
-            System.out.println(e);
+            System.out.println("ERROR IN USERDAO.SELECT_USER_BY_EMAIL : " + e);
             return null;
+        }
+    }
+
+    @Override
+    public int updateUser(User user){
+        final String USER_UPDATE = "UPDATE users AS u SET u.firstName = ?, u.LastName = ?, u.password = ?, u.role = ? WHERE u.id = ?";
+        try{
+            return getJdbcTemplate().update(USER_UPDATE,
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getPassword(),
+                    user.getRole(),
+                    user.getId()
+            );
+        }catch (RuntimeException e) {
+            System.out.println("ERROR IN USERDAO.UPDATE_USER : " + e);
+            return 0;
         }
     }
 

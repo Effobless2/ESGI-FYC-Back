@@ -27,7 +27,7 @@ public class UserController {
         if(userService.getByEmail(user.getEmail()) != null){
             return ResponseEntity
                 .status(HttpStatus.CONFLICT)
-                .body("ERROR : email already used");
+                .body("ERROR : Email already used");
         }
 
         User userModel = new User(0,
@@ -49,15 +49,15 @@ public class UserController {
     @GetMapping("/all")
     public ResponseEntity<List<UserGetDTO>> getAll(HttpServletRequest request){
         List<User> userModels = userService.getAll();
-        List<UserGetDTO> userDTOs = new ArrayList<>();
+        List<UserGetDTO> users = new ArrayList<>();
 
         for (User user: userModels) {
-            userDTOs.add(new UserGetDTO(user));
+            users.add(new UserGetDTO(user));
         }
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(userDTOs);
+                .body(users);
     }
 
     @GetMapping("/{id}")
@@ -75,4 +75,29 @@ public class UserController {
                 .status(HttpStatus.OK)
                 .body(user);
     }
+
+    @PutMapping("/")
+    public ResponseEntity<?> update(HttpServletRequest request, @Validated User user){
+
+        //TODO: récuperer l'utilisateur à partir du JWT
+
+        if(userService.getById(user.getId()) == null){
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("ERROR : User not found");
+        }
+
+        int nbUserModified = userService.updateUser(user);
+
+        if( nbUserModified == 0){
+            return ResponseEntity
+                    .status(HttpStatus.NOT_MODIFIED)
+                    .body("ERROR : User not modified");
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("SUCCES : User modified"); //TODO: retourner l'id à partir du JWT
+    }
+
 }
