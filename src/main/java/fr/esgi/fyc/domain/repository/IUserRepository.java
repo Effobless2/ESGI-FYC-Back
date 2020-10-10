@@ -10,5 +10,6 @@ public interface IUserRepository {
     public User selectUserById(Integer id);
     public User selectUserByEmail(String email);
     public int updateUser(User user);
+    public int deleteUser(User user);
 
 }

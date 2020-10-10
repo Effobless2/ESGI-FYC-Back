@@ -88,4 +88,15 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
         }
     }
 
+    @Override
+    public int deleteUser(User user){
+        final String USER_DELETE = "DELETE FROM users AS u WHERE u.id = ?";
+        try{
+            return getJdbcTemplate().update(USER_DELETE, user.getId());
+        }catch (RuntimeException e) {
+            System.out.println("ERROR IN USERDAO.USER_DELETE : " + e);
+            return 0;
+        }
+    }
+
 }

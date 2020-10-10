@@ -25,4 +25,6 @@ public class UserService {
 
     public int updateUser(User user) { return  iUserDAO.updateUser(user); }
 
+    public  int deleteUser(User user) { return iUserDAO.deleteUser(user); }
+
 }

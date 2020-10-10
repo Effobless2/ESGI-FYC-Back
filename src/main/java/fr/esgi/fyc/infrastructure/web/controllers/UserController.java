@@ -100,4 +100,22 @@ public class UserController {
                 .body("SUCCES : User modified"); //TODO: retourner l'id à partir du JWT
     }
 
+    @DeleteMapping("/")
+    public ResponseEntity<?> delete(HttpServletRequest request, @Validated User user){
+
+        //TODO: récuperer l'utilisateur à partir du JWT
+
+        int nbUserDelete = userService.deleteUser(user);
+
+        if( nbUserDelete == 0){
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body("ERROR : User not deleted");
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("SUCCES : User delete");
+    }
+
 }
