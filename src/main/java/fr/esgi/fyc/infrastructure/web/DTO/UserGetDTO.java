@@ -1,20 +1,41 @@
-package fr.esgi.fyc.DTO;
+package fr.esgi.fyc.infrastructure.web.DTO;
 
-public class UserCreateDTO {
+import fr.esgi.fyc.domain.model.User;
+
+public class UserGetDTO {
+    private int id;
     private String login;
-    private String password;
     private String firstName;
     private String lastName;
     private String email;
     private String role;
 
-    public UserCreateDTO(String login, String password, String firstName, String lastName, String email, String role) {
+    public UserGetDTO(int id, String login, String firstName, String lastName, String email, String role) {
+        this.id = id;
         this.login = login;
-        this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.role = role;
+    }
+
+    public UserGetDTO(){}
+
+    public UserGetDTO(User user){
+        this.id = user.getId();
+        this.login = user.getLogin();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.email = user.getEmail();
+        this.role = user.getRole();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getLogin() {
@@ -23,14 +44,6 @@ public class UserCreateDTO {
 
     public void setLogin(String login) {
         this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getFirstName() {

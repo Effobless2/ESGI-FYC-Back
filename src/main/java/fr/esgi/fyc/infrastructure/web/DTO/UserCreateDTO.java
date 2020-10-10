@@ -1,30 +1,20 @@
-package fr.esgi.fyc.DTO;
+package fr.esgi.fyc.infrastructure.web.DTO;
 
-public class UserGetDTO {
-    private int id;
+public class UserCreateDTO {
     private String login;
+    private String password;
     private String firstName;
     private String lastName;
     private String email;
     private String role;
 
-    public UserGetDTO(int id,String login, String firstName, String lastName, String email, String role) {
-        this.id = id;
+    public UserCreateDTO(String login, String password, String firstName, String lastName, String email, String role) {
         this.login = login;
+        this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.role = role;
-    }
-
-    public UserGetDTO(){}
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getLogin() {
@@ -33,6 +23,14 @@ public class UserGetDTO {
 
     public void setLogin(String login) {
         this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getFirstName() {

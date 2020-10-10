@@ -1,16 +1,16 @@
-package fr.esgi.fyc.persistence.parsers;
+package fr.esgi.fyc.infrastructure.persistence.parsers;
 
-import fr.esgi.fyc.DTO.UserGetDTO;
+import fr.esgi.fyc.domain.model.User;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserRowMapper implements RowMapper<UserGetDTO>{
+public class UserRowMapper implements RowMapper<User>{
     @Override
-    public UserGetDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
 
-        UserGetDTO user = new UserGetDTO();
+        User user = new User();
         user.setId(rs.getInt("id"));
         user.setLogin(rs.getString("login"));
         user.setEmail(rs.getString("email"));

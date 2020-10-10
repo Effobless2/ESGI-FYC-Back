@@ -1,4 +1,4 @@
-package fr.esgi.fyc.controllers;
+package fr.esgi.fyc.infrastructure.web.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
