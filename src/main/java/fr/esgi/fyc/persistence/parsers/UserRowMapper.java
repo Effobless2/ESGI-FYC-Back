@@ -19,6 +19,6 @@ public class UserRowMapper implements RowMapper<UserGetDTO>{
         user.setRole(rs.getString("role"));
 
         return user;
-
     }
+
 }

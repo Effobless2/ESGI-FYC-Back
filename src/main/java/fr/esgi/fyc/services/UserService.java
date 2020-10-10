@@ -6,6 +6,8 @@ import fr.esgi.fyc.domain.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -16,8 +18,10 @@ public class UserService {
         iUserDAO.saveUser(user);
     }
 
-    public UserGetDTO getByEmail(String email) { return iUserDAO.SelectUserByEmail(email); }
+    public List<UserGetDTO> getAll() { return iUserDAO.selectAllUsers(); }
 
-    public UserGetDTO getById(Integer id) { return iUserDAO.SelectUserById(id); }
+    public UserGetDTO getById(Integer id) { return iUserDAO.selectUserById(id); }
+
+    public UserGetDTO getByEmail(String email) { return iUserDAO.selectUserByEmail(email); }
 
 }

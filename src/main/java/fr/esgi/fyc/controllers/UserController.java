@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -33,6 +34,15 @@ public class UserController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body("SUCCESS : User create");
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<UserGetDTO>> getAll(HttpServletRequest request){
+        List<UserGetDTO> users = userService.getAll();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(users);
     }
 
     @GetMapping("/{id}")

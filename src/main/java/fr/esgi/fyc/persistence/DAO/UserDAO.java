@@ -9,6 +9,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class UserDAO extends JdbcDaoSupport implements IUserDAO{
@@ -37,15 +40,25 @@ public class UserDAO extends JdbcDaoSupport implements IUserDAO{
     }
 
     @Override
-    public UserGetDTO SelectUserByEmail(String email){
-        final String USER_GET_BY_EMAIL = "SELECT id, login, firstName, LastName, email, role FROM users AS u WHERE u.email = ?";
-        return getJdbcTemplate().queryForObject(USER_GET_BY_EMAIL, new Object[]{email}, new UserRowMapper());
+    public List<UserGetDTO> selectAllUsers(){
+        final String USER_GET_ALL = "SELECT id, login, firstName, LastName, email, role FROM users";
+        List<UserGetDTO> users = getJdbcTemplate().query(
+                USER_GET_ALL,
+                new UserRowMapper());
+
+        return users;
     }
 
     @Override
-    public UserGetDTO SelectUserById(Integer id){
+    public UserGetDTO selectUserById(Integer id){
         final String USER_GET_BY_ID = "SELECT id, login, firstName, LastName, email, role FROM users AS u WHERE u.id = ?";
         return getJdbcTemplate().queryForObject(USER_GET_BY_ID, new Object[]{id}, new UserRowMapper());
+    }
+
+    @Override
+    public UserGetDTO selectUserByEmail(String email){
+        final String USER_GET_BY_EMAIL = "SELECT id, login, firstName, LastName, email, role FROM users AS u WHERE u.email = ?";
+        return getJdbcTemplate().queryForObject(USER_GET_BY_EMAIL, new Object[]{email}, new UserRowMapper());
     }
 
 }
