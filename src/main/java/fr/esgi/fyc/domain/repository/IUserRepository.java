@@ -9,5 +9,6 @@ public interface IUserRepository {
     public List<User> selectAllUsers();
     public User selectUserById(Integer id);
     public User selectUserByEmail(String email);
+    //public int countUserByEmail(String email);
 
 }

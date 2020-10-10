@@ -24,9 +24,13 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> create(HttpServletRequest request, @Validated UserCreateDTO user){
 
-        //TODO:Verifier qu'aucun n'utilisateur existe déjà avec cette email (champ Unique)
+        if(userService.getByEmail(user.getEmail()) != null){
+            return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body("ERROR : email already used");
+        }
 
-        fr.esgi.fyc.domain.model.User userModel = new fr.esgi.fyc.domain.model.User(0,
+        User userModel = new User(0,
                 user.getLogin(),
                 user.getPassword(),
                 user.getFirstName(),
@@ -57,9 +61,16 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserGetDTO> getById(HttpServletRequest request, @PathVariable("id") int id){
-        UserGetDTO user = new UserGetDTO(userService.getById(id));
+    public ResponseEntity<?> getById(HttpServletRequest request, @PathVariable("id") int id){
+        User userModel = userService.getById(id);
 
+        if(userModel == null) {
+            return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("ERROR : User not found");
+        }
+
+        UserGetDTO user = new UserGetDTO(userModel);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(user);
