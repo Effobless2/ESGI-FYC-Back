@@ -33,4 +33,14 @@ public class UserController {
                 .status(HttpStatus.CREATED)
                 .body("SUCCESS : User create");
     }
+
+    @GetMapping("/id")
+    public ResponseEntity<User> getById(HttpServletRequest request, @Validated Integer id){
+
+        User user = userService.getById(id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(user);
+    }
 }

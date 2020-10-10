@@ -15,4 +15,8 @@ public class UserService {
         iUserDAO.saveUser(user);
     }
 
+    public User getByEmail(String email) { return iUserDAO.SelectUserByEmail(email); }
+
+    public User getById(Integer id) { return iUserDAO.SelectUserById(id); }
+
 }

@@ -22,7 +22,7 @@ public class UserDAO extends JdbcDaoSupport implements IUserDAO{
     @Override
     public void saveUser(User user) {
 
-        final String USER_INSERT = "insert into users (login, password, firstName, LastName, email, role) values (?,?,?,?,?,?)";
+        final String USER_INSERT = "INSERT INTO users (login, password, firstName, LastName, email, role) values (?,?,?,?,?,?)";
 
         getJdbcTemplate().update(USER_INSERT,
                 user.getLogin(),
@@ -32,6 +32,24 @@ public class UserDAO extends JdbcDaoSupport implements IUserDAO{
                 user.getEmail(),
                 user.getRole()
         );
+    }
+
+    @Override
+    public User SelectUserByEmail(String email){
+        final String USER_GET_BY_EMAIL = "SELECT id, login, firstName, LastName, email, role FROM users AS u WHERE u.email = ?";
+
+        User user = getJdbcTemplate().queryForObject(USER_GET_BY_EMAIL, new Object[]{email}, User.class);
+
+        return user;
+    }
+
+    @Override
+    public User SelectUserById(Integer id){
+        final String USER_GET_BY_ID = "SELECT id, login, firstName, LastName, email, role FROM users AS u WHERE u.id = ?";
+
+        User user = getJdbcTemplate().queryForObject(USER_GET_BY_ID, new Object[]{id}, User.class);
+
+        return user;
     }
 
 }
