@@ -22,7 +22,7 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> create(HttpServletRequest request, @Validated UserCreateDTO user){
+    public ResponseEntity<?> create(HttpServletRequest request, @RequestBody UserCreateDTO user){
 
         if(userService.getByEmail(user.getEmail()) != null){
             return ResponseEntity
@@ -77,7 +77,7 @@ public class UserController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<?> update(HttpServletRequest request, @Validated User user){
+    public ResponseEntity<?> update(HttpServletRequest request, @RequestBody User user){
 
         //TODO: récuperer l'utilisateur à partir du JWT
 
@@ -101,7 +101,7 @@ public class UserController {
     }
 
     @DeleteMapping("/")
-    public ResponseEntity<?> delete(HttpServletRequest request, @Validated User user){
+    public ResponseEntity<?> delete(HttpServletRequest request, @RequestBody User user){
 
         //TODO: récuperer l'utilisateur à partir du JWT
 
