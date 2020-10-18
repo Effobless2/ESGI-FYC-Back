@@ -12,22 +12,22 @@ import java.util.List;
 public class UserService {
 
     @Autowired
-    private IUserRepository iUserDAO;
+    private IUserRepository iUserRepository;
 
     public void add(User user){
-        iUserDAO.saveUser(user);
+      iUserRepository.saveUser(user);
     }
 
-    public List<User> getAll() { return iUserDAO.selectAllUsers(); }
+    public List<User> getAll() { return iUserRepository.selectAllUsers(); }
 
-    public User getById(Integer id) { return iUserDAO.selectUserById(id); }
+    public User getById(Integer id) { return iUserRepository.selectUserById(id); }
 
-    public User getByEmail(String email) { return iUserDAO.selectUserByEmail(email); }
+    public User getByEmail(String email) { return iUserRepository.selectUserByEmail(email); }
 
-    public int updateUser(User user) { return  iUserDAO.updateUser(user); }
+    public int updateUser(User user) { return  iUserRepository.updateUser(user); }
 
-    public  int deleteUser(User user) { return iUserDAO.deleteUser(user); }
+    public  int deleteUser(User user) { return iUserRepository.deleteUser(user); }
 
-    public int updateUserPassword(AuthDTO authDTO) { return  iUserDAO.updateUserPassword(authDTO); }
+    public int updateUserPassword(AuthDTO authDTO) { return  iUserRepository.updateUserPassword(authDTO); }
 
 }

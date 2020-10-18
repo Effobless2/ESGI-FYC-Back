@@ -25,8 +25,8 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
     }
 
     @Override
-    public void saveUser(User user) {
-
+    public int saveUser(User user) {
+      try{
         final String USER_INSERT = "INSERT INTO users (password, firstName, lastName, email, role) values (?,?,?,?,?)";
 
         getJdbcTemplate().update(USER_INSERT,
@@ -36,6 +36,12 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
                 user.getEmail(),
                 user.getRole()
         );
+        return getJdbcTemplate().queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+
+      }catch (EmptyResultDataAccessException e) {
+        System.out.println("ERROR IN USERDAO.SELECT_USER_BY_ID : " + e);
+        return -1;
+      }
     }
 
     @Override

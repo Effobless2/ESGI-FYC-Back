@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IUserRepository {
 
-    public void saveUser(User user);
+    public int saveUser(User user);
     public List<User> selectAllUsers();
     public User selectUserById(Integer id);
     public User selectUserByEmail(String email);
