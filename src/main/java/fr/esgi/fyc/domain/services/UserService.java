@@ -2,6 +2,7 @@ package fr.esgi.fyc.domain.services;
 
 import fr.esgi.fyc.domain.model.User;
 import fr.esgi.fyc.domain.repository.IUserRepository;
+import fr.esgi.fyc.infrastructure.web.DTO.AuthDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +27,7 @@ public class UserService {
     public int updateUser(User user) { return  iUserDAO.updateUser(user); }
 
     public  int deleteUser(User user) { return iUserDAO.deleteUser(user); }
+
+    public int updateUserPassword(AuthDTO authDTO) { return  iUserDAO.updateUserPassword(authDTO); }
 
 }
