@@ -18,6 +18,8 @@ public class Post {
     this.idUser = idUser;
   }
 
+  public Post(){}
+
   public int getId() {
     return id;
   }

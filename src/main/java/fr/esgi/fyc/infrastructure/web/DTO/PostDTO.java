@@ -1,11 +1,11 @@
 package fr.esgi.fyc.infrastructure.web.DTO;
 
-public class PostsDTO {
+public class PostDTO {
   private String title;
   private String content;
   private String createdAt;
 
-  public PostsDTO(String title, String content, String createdAt) {
+  public PostDTO(String title, String content, String createdAt) {
     this.title = title;
     this.content = content;
     this.createdAt = createdAt;
