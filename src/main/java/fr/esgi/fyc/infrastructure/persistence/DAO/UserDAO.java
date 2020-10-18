@@ -3,6 +3,7 @@ package fr.esgi.fyc.infrastructure.persistence.DAO;
 import fr.esgi.fyc.domain.model.User;
 import fr.esgi.fyc.domain.repository.IUserRepository;
 import fr.esgi.fyc.infrastructure.persistence.parsers.UserRowMapper;
+import fr.esgi.fyc.infrastructure.web.DTO.AuthDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.List;
 
 @Repository
@@ -40,17 +40,16 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
 
     @Override
     public List<User> selectAllUsers(){
-        final String USER_GET_ALL = "SELECT id, firstName, lastName, email, role FROM users";
+        final String USER_GET_ALL = "SELECT id, firstName, lastName, email, password, role FROM users";
         List<User> users = getJdbcTemplate().query(
                 USER_GET_ALL,
                 new UserRowMapper());
-
         return users;
     }
 
     @Override
     public User selectUserById(Integer id){
-        final String USER_GET_BY_ID = "SELECT id, firstName, lastName, email, role FROM users AS u WHERE u.id = ?";
+        final String USER_GET_BY_ID = "SELECT id, firstName, lastName, email, password, role FROM users AS u WHERE u.id = ?";
         try{
             return getJdbcTemplate().queryForObject(USER_GET_BY_ID, new Object[]{id}, new UserRowMapper());
         }catch (EmptyResultDataAccessException e) {
@@ -61,7 +60,7 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
 
     @Override
     public User selectUserByEmail(String email){
-        final String USER_GET_BY_EMAIL = "SELECT id, firstName, lastName, email, role FROM users AS u WHERE u.email = ?";
+        final String USER_GET_BY_EMAIL = "SELECT id, firstName, lastName, email, password, role FROM users AS u WHERE u.email = ?";
         try{
             return getJdbcTemplate().queryForObject(USER_GET_BY_EMAIL, new Object[]{email}, new UserRowMapper());
         }catch (EmptyResultDataAccessException e) {
@@ -84,6 +83,20 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
             System.out.println("ERROR IN USERDAO.UPDATE_USER : " + e);
             return 0;
         }
+    }
+
+    @Override
+    public int updateUserPassword(AuthDTO authDTO){
+      final String USER_UPDATE_PASSWORD = "UPDATE users AS u SET u.password = ? WHERE u.id = ?";
+      try{
+        return getJdbcTemplate().update(USER_UPDATE_PASSWORD,
+          authDTO.getPassword(),
+          authDTO.getId()
+        );
+      }catch (RuntimeException e) {
+        System.out.println("ERROR IN USERDAO.UPDATE_USER_PASSWORD : " + e);
+        return 0;
+      }
     }
 
     @Override
