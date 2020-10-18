@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
@@ -38,11 +38,17 @@ public class UserController {
                   user.getRole());
           userService.add(userModel);
 
-          int idUserCreated = userService.getByEmail(user.getEmail()).getId();
+          int id = userService.getByEmail(user.getEmail()).getId();
+
+          if(id == -1){
+            return ResponseEntity
+              .status(HttpStatus.CONFLICT)
+              .body("ERROR : NOT CREATE");
+          }
 
           return ResponseEntity
                   .status(HttpStatus.CREATED)
-                  .body(idUserCreated);
+                  .body(id);
 
         } catch (Exception e) {
           return ResponseEntity
