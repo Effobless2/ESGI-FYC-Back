@@ -62,10 +62,10 @@ public class PostController {
       }
     }
 
-    @GetMapping("/user/{idUser}")
-    public ResponseEntity<?> getByUser(HttpServletRequest request, @PathVariable("idUser") int idUser){
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getByUser(HttpServletRequest request, @PathVariable("userId") int userId){
       try{
-        User userModel = userService.getById(idUser);
+        User userModel = userService.getById(userId);
 
         if(userModel == null) {
           return ResponseEntity
@@ -73,7 +73,7 @@ public class PostController {
             .body("ERROR : User not found");
         }
 
-        List<Post> posts = postService.getByUser(idUser);
+        List<Post> posts = postService.getByUser(userId);
 
         return ResponseEntity
           .status(HttpStatus.OK)
@@ -86,4 +86,33 @@ public class PostController {
       }
     }
 
+  @DeleteMapping("/{postId}")
+  public ResponseEntity<?> delete(HttpServletRequest request, @PathVariable("postId") int postId){
+    try{
+      //TODO: récuperer l'utilisateur à partir du JWT ET LE COMPARER a L'idUser du POST !!!
+
+      if(postService.getById(postId) == null){
+        return ResponseEntity
+          .status(HttpStatus.NOT_FOUND)
+          .body("ERROR : Post not found");
+      }
+
+      int nbPostDelete = postService.deletePost(postId);
+
+      if( nbPostDelete == 0){
+        return ResponseEntity
+          .status(HttpStatus.CONFLICT)
+          .body("ERROR : Post not deleted");
+      }
+
+      return ResponseEntity
+        .status(HttpStatus.OK)
+        .body("SUCCES : Post delete");
+    } catch (Exception e) {
+      return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("ERROR : " + e.getMessage());
+    }
+
+  }
 }

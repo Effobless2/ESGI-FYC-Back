@@ -15,6 +15,10 @@ public class PostService {
 
   public int add(Post post){ return iPostRepository.add(post); }
 
+  public Post getById(int postId){ return  iPostRepository.selectPostById(postId); }
+
   public List<Post> getByUser(int userId) { return iPostRepository.selectAllPostsByUser(userId); }
+
+  public int deletePost(int postId) { return iPostRepository.deletePost(postId);}
 
 }
