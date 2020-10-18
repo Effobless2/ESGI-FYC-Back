@@ -4,15 +4,13 @@ import fr.esgi.fyc.domain.model.User;
 
 public class UserGetDTO {
     private int id;
-    private String login;
     private String firstName;
     private String lastName;
     private String email;
     private String role;
 
-    public UserGetDTO(int id, String login, String firstName, String lastName, String email, String role) {
+    public UserGetDTO(int id, String firstName, String lastName, String email, String role) {
         this.id = id;
-        this.login = login;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -23,7 +21,6 @@ public class UserGetDTO {
 
     public UserGetDTO(User user){
         this.id = user.getId();
-        this.login = user.getLogin();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.email = user.getEmail();
@@ -36,14 +33,6 @@ public class UserGetDTO {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
     }
 
     public String getFirstName() {

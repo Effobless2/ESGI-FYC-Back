@@ -5,11 +5,10 @@ SET time_zone = "+00:00";
 
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int UNSIGNED NOT NULL,
-  `login` varchar(25) NOT NULL DEFAULT '',
+  `email` varchar(30) DEFAULT NULL,
   `password` varchar(10) NOT NULL DEFAULT '',
   `lastName` varchar(30) NOT NULL DEFAULT '',
   `firstName` varchar(30) NOT NULL DEFAULT '',
-  `email` varchar(30) DEFAULT NULL,
   `role` varchar(10) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

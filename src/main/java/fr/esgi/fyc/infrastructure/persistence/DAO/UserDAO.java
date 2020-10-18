@@ -27,10 +27,9 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
     @Override
     public void saveUser(User user) {
 
-        final String USER_INSERT = "INSERT INTO users (login, password, firstName, lastName, email, role) values (?,?,?,?,?,?)";
+        final String USER_INSERT = "INSERT INTO users (password, firstName, lastName, email, role) values (?,?,?,?,?)";
 
         getJdbcTemplate().update(USER_INSERT,
-                user.getLogin(),
                 user.getPassword(),
                 user.getFirstName(),
                 user.getLastName(),
@@ -41,7 +40,7 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
 
     @Override
     public List<User> selectAllUsers(){
-        final String USER_GET_ALL = "SELECT id, login, firstName, lastName, email, role FROM users";
+        final String USER_GET_ALL = "SELECT id, firstName, lastName, email, role FROM users";
         List<User> users = getJdbcTemplate().query(
                 USER_GET_ALL,
                 new UserRowMapper());
@@ -51,7 +50,7 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
 
     @Override
     public User selectUserById(Integer id){
-        final String USER_GET_BY_ID = "SELECT id, login, firstName, lastName, email, role FROM users AS u WHERE u.id = ?";
+        final String USER_GET_BY_ID = "SELECT id, firstName, lastName, email, role FROM users AS u WHERE u.id = ?";
         try{
             return getJdbcTemplate().queryForObject(USER_GET_BY_ID, new Object[]{id}, new UserRowMapper());
         }catch (EmptyResultDataAccessException e) {
@@ -62,7 +61,7 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
 
     @Override
     public User selectUserByEmail(String email){
-        final String USER_GET_BY_EMAIL = "SELECT id, login, firstName, lastName, email, role FROM users AS u WHERE u.email = ?";
+        final String USER_GET_BY_EMAIL = "SELECT id, firstName, lastName, email, role FROM users AS u WHERE u.email = ?";
         try{
             return getJdbcTemplate().queryForObject(USER_GET_BY_EMAIL, new Object[]{email}, new UserRowMapper());
         }catch (EmptyResultDataAccessException e) {
@@ -73,12 +72,11 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
 
     @Override
     public int updateUser(User user){
-        final String USER_UPDATE = "UPDATE users AS u SET u.firstName = ?, u.lastName = ?, u.password = ?, u.role = ? WHERE u.id = ?";
+        final String USER_UPDATE = "UPDATE users AS u SET u.firstName = ?, u.lastName = ?, u.role = ? WHERE u.id = ?";
         try{
             return getJdbcTemplate().update(USER_UPDATE,
                     user.getFirstName(),
                     user.getLastName(),
-                    user.getPassword(),
                     user.getRole(),
                     user.getId()
             );
@@ -89,14 +87,14 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
     }
 
     @Override
-    public int deleteUser(User user){
-        final String USER_DELETE = "DELETE FROM users AS u WHERE u.id = ?";
-        try{
-            return getJdbcTemplate().update(USER_DELETE, user.getId());
-        }catch (RuntimeException e) {
-            System.out.println("ERROR IN USERDAO.USER_DELETE : " + e);
-            return 0;
-        }
-    }
+      public int deleteUser(User user){
+          final String USER_DELETE = "DELETE FROM users AS u WHERE u.id = ?";
+          try{
+              return getJdbcTemplate().update(USER_DELETE, user.getId());
+          }catch (RuntimeException e) {
+              System.out.println("ERROR IN USERDAO.USER_DELETE : " + e);
+              return 0;
+          }
+      }
 
 }

@@ -31,7 +31,6 @@ public class UserController {
         }
 
         User userModel = new User(0,
-                user.getLogin(),
                 user.getPassword(),
                 user.getFirstName(),
                 user.getLastName(),
@@ -46,7 +45,7 @@ public class UserController {
                 .body(idUserCreated);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/")
     public ResponseEntity<List<UserGetDTO>> getAll(HttpServletRequest request){
         List<User> userModels = userService.getAll();
         List<UserGetDTO> users = new ArrayList<>();
