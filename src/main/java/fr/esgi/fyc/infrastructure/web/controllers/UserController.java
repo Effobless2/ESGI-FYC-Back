@@ -131,12 +131,18 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/")
-    public ResponseEntity<?> delete(HttpServletRequest request, @RequestBody User user){
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> delete(@PathVariable int userId){
         try{
+            User u = userService.getById(userId);
           //TODO: récuperer l'utilisateur à partir du JWT
 
-          int nbUserDelete = userService.deleteUser(user);
+            if (u == null) {
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body("ERROR : User not deleted");
+            }
+          int nbUserDelete = userService.deleteUser(u);
 
           if( nbUserDelete == 0){
               return ResponseEntity
