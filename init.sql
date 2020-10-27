@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `fyc_db`.`posts` (
   CONSTRAINT `fk_posts_users`
     FOREIGN KEY (`id_user`)
     REFERENCES `fyc_db`.`users` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB DEFAULT CHARSET=latin1;
 
