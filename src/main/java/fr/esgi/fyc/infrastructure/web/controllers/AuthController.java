@@ -6,6 +6,7 @@ import fr.esgi.fyc.infrastructure.web.DTO.AuthDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 @CrossOrigin(origins = "*")
 @RequestMapping("/api/auth")
 public class AuthController {
+
+  @Autowired
+  BCryptPasswordEncoder bCryptPasswordEncoder;
 
   @Autowired
   UserService userService;
@@ -28,7 +32,9 @@ public class AuthController {
           .body("Error : User not found");
       }
 
-      if (!user.getPassword().equals(authDTO.getPassword())){
+      Boolean passwordIsMatche = bCryptPasswordEncoder.matches(authDTO.getPassword(), user.getPassword());
+
+      if (!passwordIsMatche){
         return ResponseEntity
           .status(HttpStatus.UNAUTHORIZED)
           .body("Error : Incorrect password");
@@ -57,6 +63,8 @@ public class AuthController {
           .status(HttpStatus.NOT_FOUND)
           .body("ERROR : User not found");
       }
+
+      authDTO.setPassword(bCryptPasswordEncoder.encode(authDTO.getPassword()));
 
       int nbUserModified = userService.updateUserPassword(authDTO);
 
