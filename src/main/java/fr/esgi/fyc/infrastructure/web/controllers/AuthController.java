@@ -3,6 +3,7 @@ package fr.esgi.fyc.infrastructure.web.controllers;
 import fr.esgi.fyc.domain.model.User;
 import fr.esgi.fyc.domain.services.UserService;
 import fr.esgi.fyc.infrastructure.web.DTO.AuthDTO;
+import fr.esgi.fyc.infrastructure.web.Security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 @CrossOrigin(origins = "*")
 @RequestMapping("/api/auth")
 public class AuthController {
+
+  @Autowired
+  JwtUtils jwtUtils;
 
   @Autowired
   BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -40,9 +44,11 @@ public class AuthController {
           .body("Error : Incorrect password");
       }
 
+      String token = jwtUtils.generateToken(user);
+
       return ResponseEntity
         .status(HttpStatus.OK)
-        .body("SUCCES : Authentifier !");
+        .body(token);
 
       } catch (Exception e) {
 
