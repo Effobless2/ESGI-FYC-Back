@@ -60,21 +60,23 @@ public class JwtUtils {
             Jws<Claims> claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
             if(claims.getBody().getExpiration().before(new Date())){
                 System.out.println("Token expired");
+                return false;
             }
             return true;
         } catch (MalformedJwtException | SignatureException e){
-            System.out.println("Invalid Token");
+            System.out.println("Invalid token");
             return false;
         } catch (ExpiredJwtException e){
             System.out.println("Token Expired");
             return false;
         } catch (UnsupportedJwtException e){
-            System.out.println("Unsupported Token");
+            System.out.println("Unsupported token");
             return false;
         } catch (IllegalArgumentException e){
             System.out.println("Token compact of handler are invalid");
             return false;
         }
+        
     }
 
 }
