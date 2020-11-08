@@ -4,6 +4,7 @@ import fr.esgi.fyc.domain.model.User;
 import fr.esgi.fyc.infrastructure.web.DTO.UserCreateDTO;
 import fr.esgi.fyc.infrastructure.web.DTO.UserGetDTO;
 import fr.esgi.fyc.domain.services.UserService;
+import fr.esgi.fyc.infrastructure.web.Security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,9 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 @RequestMapping("/api/users")
 public class UserController {
+
+    @Autowired
+    JwtUtils jwtUtils;
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -110,25 +114,28 @@ public class UserController {
     @PutMapping("/")
     public ResponseEntity<?> update(HttpServletRequest request, @RequestBody User user){
         try{
-          //TODO: récuperer l'utilisateur à partir du JWT
+            String token = jwtUtils.resolveToken(request);
+            Boolean tokenIsvalidated = jwtUtils.validateToken(token);
 
-          if(userService.getById(user.getId()) == null){
-              return ResponseEntity
-                      .status(HttpStatus.NOT_FOUND)
-                      .body("ERROR : User not found");
-          }
+            if(!tokenIsvalidated){
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body("ERROR : UNAUTHORIZED");
+            }
 
-          int nbUserModified = userService.updateUser(user);
+            int userId = jwtUtils.getUserId(token);
+            user.setId(userId);
+            int nbUserModified = userService.updateUser(user);
 
-          if( nbUserModified == 0){
-              return ResponseEntity
-                      .status(HttpStatus.NOT_MODIFIED)
-                      .body("ERROR : User not modified");
-          }
+            if( nbUserModified == 0){
+                return ResponseEntity
+                        .status(HttpStatus.NOT_MODIFIED)
+                        .body("ERROR : User not modified");
+            }
 
-          return ResponseEntity
-                  .status(HttpStatus.OK)
-                  .body("SUCCES : User modified"); //TODO: retourner l'id à partir du JWT
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(userId);
 
         } catch (Exception e) {
           return ResponseEntity
@@ -137,18 +144,22 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<?> delete(@PathVariable int userId){
+    @DeleteMapping("/")
+    public ResponseEntity<?> delete(HttpServletRequest request){
         try{
-            User u = userService.getById(userId);
-          //TODO: récuperer l'utilisateur à partir du JWT
+            String token = jwtUtils.resolveToken(request);
+            Boolean tokenIsvalidated = jwtUtils.validateToken(token);
 
-            if (u == null) {
+            if(!tokenIsvalidated){
                 return ResponseEntity
-                        .status(HttpStatus.CONFLICT)
-                        .body("ERROR : User not deleted");
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body("ERROR : UNAUTHORIZED");
             }
-          int nbUserDelete = userService.deleteUser(u);
+
+            int userId = jwtUtils.getUserId(token);
+            User user = userService.getById(userId);
+
+            int nbUserDelete = userService.deleteUser(user);
 
           if( nbUserDelete == 0){
               return ResponseEntity

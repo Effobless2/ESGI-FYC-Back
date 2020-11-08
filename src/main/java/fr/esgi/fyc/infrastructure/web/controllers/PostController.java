@@ -5,6 +5,7 @@ import fr.esgi.fyc.domain.model.User;
 import fr.esgi.fyc.domain.services.PostService;
 import fr.esgi.fyc.domain.services.UserService;
 import fr.esgi.fyc.infrastructure.web.DTO.PostDTO;
+import fr.esgi.fyc.infrastructure.web.Security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,97 +22,133 @@ import java.util.List;
 public class PostController {
 
   @Autowired
+  JwtUtils jwtUtils;
+
+  @Autowired
   UserService userService;
 
   @Autowired
   PostService postService;
 
-    @PostMapping("/")
-    public ResponseEntity<?> create(HttpServletRequest request, @RequestBody Post post){
-      try{
-
-        //TODO: test authentification User via JWT
-
-        post.setId(0);
-
-        Date currentDate = new Date(System.currentTimeMillis());
-        post.setCreatedAt(currentDate);
-
-        if(userService.getById(post.getId()) != null){
-          return ResponseEntity
-            .status(HttpStatus.UNAUTHORIZED)
-            .body("ERROR : UNAUTHORIZED");
-        }
-
-        int id = postService.add(post);
-
-        if(id == -1){
-          return ResponseEntity
-            .status(HttpStatus.CONFLICT)
-            .body("ERROR : NOT CREATE");
-        }
-
-        return ResponseEntity
-          .status(HttpStatus.CREATED)
-          .body(id);
-
-      } catch (Exception e) {
-        return ResponseEntity
-          .status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("ERROR : " + e.getMessage());
-      }
-    }
-
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<?> getByUser(HttpServletRequest request, @PathVariable("userId") int userId){
-      try{
-        User userModel = userService.getById(userId);
-
-        if(userModel == null) {
-          return ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
-            .body("ERROR : User not found");
-        }
-
-        List<Post> posts = postService.getByUser(userId);
-
-        return ResponseEntity
-          .status(HttpStatus.OK)
-          .body(posts);
-
-      } catch (Exception e) {
-        return ResponseEntity
-          .status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("ERROR : " + e.getMessage());
-      }
-    }
-
-  @DeleteMapping("/{postId}")
-  public ResponseEntity<?> delete(HttpServletRequest request, @PathVariable("postId") int postId){
+  @PostMapping("/")
+  public ResponseEntity<?> create(HttpServletRequest request, @RequestBody Post post){
     try{
-      //TODO: récuperer l'utilisateur à partir du JWT ET LE COMPARER a L'idUser du POST !!!
 
-      if(postService.getById(postId) == null){
+      String token = jwtUtils.resolveToken(request);
+      Boolean tokenIsvalidated = jwtUtils.validateToken(token);
+
+      if(!tokenIsvalidated){
         return ResponseEntity
-          .status(HttpStatus.NOT_FOUND)
-          .body("ERROR : Post not found");
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("ERROR : UNAUTHORIZED");
       }
 
-      int nbPostDelete = postService.deletePost(postId);
+      int userId = jwtUtils.getUserId(token);
+      post.setIdUser(userId);
+      post.setId(0);
+      Date currentDate = new Date(System.currentTimeMillis());
+      post.setCreatedAt(currentDate);
+
+      int id = postService.add(post);
+
+      if(id == -1){
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body("ERROR : NOT CREATE");
+      }
+
+      return ResponseEntity
+              .status(HttpStatus.CREATED)
+              .body(id);
+
+    } catch (Exception e) {
+      return ResponseEntity
+              .status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body("ERROR : " + e.getMessage());
+    }
+  }
+
+  @GetMapping("/user/")
+  public ResponseEntity<?> getByUser(HttpServletRequest request){
+    try{
+
+      String token = jwtUtils.resolveToken(request);
+      Boolean tokenIsvalidated = jwtUtils.validateToken(token);
+
+      if(!tokenIsvalidated){
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("ERROR : UNAUTHORIZED");
+      }
+
+      int userId = jwtUtils.getUserId(token);
+
+      User userModel = userService.getById(userId);
+
+      if(userModel == null) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("ERROR : User not found");
+      }
+
+      List<Post> posts = postService.getByUser(userId);
+
+      return ResponseEntity
+              .status(HttpStatus.OK)
+              .body(posts);
+
+    } catch (Exception e) {
+      return ResponseEntity
+              .status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body("ERROR : " + e.getMessage());
+    }
+  }
+
+  @DeleteMapping("/")
+  public ResponseEntity<?> delete(HttpServletRequest request, @RequestBody PostDTO postDTO){
+    try{
+      String token = jwtUtils.resolveToken(request);
+      Boolean tokenIsvalidated = jwtUtils.validateToken(token);
+      int userId = jwtUtils.getUserId(token);
+
+      if(!tokenIsvalidated){
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("ERROR : UNAUTHORIZED");
+      }
+
+      Post post = postService.getById(postDTO.getId());
+
+      if(post == null){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("ERROR : Post not found");
+      }
+
+      Boolean idIsMatche = userId == post.getIdUser();
+
+      if(!idIsMatche){
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("ERROR : You are not the author of the post");
+      }
+
+      int nbPostDelete = postService.deletePost(post.getId());
 
       if( nbPostDelete == 0){
         return ResponseEntity
-          .status(HttpStatus.CONFLICT)
-          .body("ERROR : Post not deleted");
+                .status(HttpStatus.CONFLICT)
+                .body("ERROR : Post not deleted");
       }
 
       return ResponseEntity
-        .status(HttpStatus.OK)
-        .body("SUCCES : Post delete");
+              .status(HttpStatus.OK)
+              .body("SUCCES : Post delete");
+
     } catch (Exception e) {
       return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("ERROR : " + e.getMessage());
+              .status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body("ERROR : " + e.getMessage());
     }
 
   }

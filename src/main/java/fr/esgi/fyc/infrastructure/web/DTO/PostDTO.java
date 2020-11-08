@@ -1,14 +1,24 @@
 package fr.esgi.fyc.infrastructure.web.DTO;
 
 public class PostDTO {
+  private int id;
   private String title;
   private String content;
   private String createdAt;
 
-  public PostDTO(String title, String content, String createdAt) {
+  public PostDTO(int id, String title, String content, String createdAt) {
+    this.id = id;
     this.title = title;
     this.content = content;
     this.createdAt = createdAt;
+  }
+
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
   }
 
   public String getTitle() {

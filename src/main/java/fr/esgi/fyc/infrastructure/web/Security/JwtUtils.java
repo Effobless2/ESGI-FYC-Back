@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Service
@@ -40,6 +41,40 @@ public class JwtUtils {
     public String generateToken(User user){
         Claims claims = generateClaims(user);
         return createToken(claims, Long.valueOf(user.getId()));
+    }
+
+    public String resolveToken(HttpServletRequest req){
+        String bearerToken = req.getHeader("Authorization");
+        if(bearerToken != null && bearerToken.startsWith("Bearer ")){
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+    public int getUserId(String token){
+        return Integer.parseInt(Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject());
+    }
+
+    public boolean validateToken(String token){
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
+            if(claims.getBody().getExpiration().before(new Date())){
+                System.out.println("Token expired");
+            }
+            return true;
+        } catch (MalformedJwtException | SignatureException e){
+            System.out.println("Invalid Token");
+            return false;
+        } catch (ExpiredJwtException e){
+            System.out.println("Token Expired");
+            return false;
+        } catch (UnsupportedJwtException e){
+            System.out.println("Unsupported Token");
+            return false;
+        } catch (IllegalArgumentException e){
+            System.out.println("Token compact of handler are invalid");
+            return false;
+        }
     }
 
 }

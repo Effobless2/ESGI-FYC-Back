@@ -62,14 +62,24 @@ public class AuthController {
   @PutMapping("/pwd")
   public ResponseEntity<?> updatePwd(HttpServletRequest request, @RequestBody AuthDTO authDTO) {
     try {
-      //TODO: récuperer l'utilisateur à partir du JWT
+      String token = jwtUtils.resolveToken(request);
+      Boolean tokenIsValid = jwtUtils.validateToken(token);
 
-      if (userService.getById(authDTO.getId()) == null) {
+      if(!tokenIsValid){
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("ERROR: UNAUTHORIZED");
+      }
+
+      int userId = jwtUtils.getUserId(token);
+
+      if (userService.getById(userId) == null) {
         return ResponseEntity
           .status(HttpStatus.NOT_FOUND)
           .body("ERROR : User not found");
       }
 
+      authDTO.setId(userId);
       authDTO.setPassword(bCryptPasswordEncoder.encode(authDTO.getPassword()));
 
       int nbUserModified = userService.updateUserPassword(authDTO);
@@ -82,7 +92,7 @@ public class AuthController {
 
       return ResponseEntity
         .status(HttpStatus.OK)
-        .body("SUCCES : User password modified"); //TODO: retourner l'id à partir du JWT
+        .body(userId);
 
     } catch (Exception e) {
       return ResponseEntity
