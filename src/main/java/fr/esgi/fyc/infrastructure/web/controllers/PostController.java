@@ -44,7 +44,16 @@ public class PostController {
       }
 
       int userId = jwtUtils.getUserId(token);
-      post.setIdUser(userId);
+
+      User userModel = userService.getById(userId);
+
+      if(userModel == null) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("ERROR : User not found");
+      }
+
+      post.setUser(userModel);
       post.setId(0);
       Date currentDate = new Date(System.currentTimeMillis());
       post.setCreatedAt(currentDate);
@@ -68,20 +77,26 @@ public class PostController {
     }
   }
 
-  @GetMapping("/user/")
-  public ResponseEntity<?> getByUser(HttpServletRequest request){
+  @GetMapping("/")
+  public ResponseEntity<?> getAll(HttpServletRequest request){
     try{
 
-      String token = jwtUtils.resolveToken(request);
-      Boolean tokenIsvalidated = jwtUtils.validateToken(token);
+      List<Post> posts = postService.getAll();
 
-      if(!tokenIsvalidated){
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body("ERROR : UNAUTHORIZED");
-      }
+      return ResponseEntity
+              .status(HttpStatus.OK)
+              .body(posts);
 
-      int userId = jwtUtils.getUserId(token);
+    } catch (Exception e) {
+      return ResponseEntity
+              .status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body("ERROR : " + e.getMessage());
+    }
+  }
+
+  @GetMapping("/user/{userId}")
+  public ResponseEntity<?> getByUser(HttpServletRequest request, @PathVariable("userId") int userId){
+    try{
 
       User userModel = userService.getById(userId);
 
@@ -91,7 +106,7 @@ public class PostController {
                 .body("ERROR : User not found");
       }
 
-      List<Post> posts = postService.getByUser(userId);
+      List<Post> posts = postService.getByUser(userModel);
 
       return ResponseEntity
               .status(HttpStatus.OK)
@@ -109,7 +124,6 @@ public class PostController {
     try{
       String token = jwtUtils.resolveToken(request);
       Boolean tokenIsvalidated = jwtUtils.validateToken(token);
-      int userId = jwtUtils.getUserId(token);
 
       if(!tokenIsvalidated){
         return ResponseEntity
@@ -117,7 +131,11 @@ public class PostController {
                 .body("ERROR : UNAUTHORIZED");
       }
 
+      int userId = jwtUtils.getUserId(token);
+      User userModel = userService.getById(userId);
+
       Post post = postService.getById(postDTO.getId());
+      post.setUser(userModel);
 
       if(post == null){
         return ResponseEntity
@@ -125,7 +143,7 @@ public class PostController {
                 .body("ERROR : Post not found");
       }
 
-      Boolean idIsMatche = userId == post.getIdUser();
+      Boolean idIsMatche = userModel.getId() == post.getUser().getId();
 
       if(!idIsMatche){
         return ResponseEntity

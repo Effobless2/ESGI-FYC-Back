@@ -1,6 +1,7 @@
 package fr.esgi.fyc.domain.services;
 
 import fr.esgi.fyc.domain.model.Post;
+import fr.esgi.fyc.domain.model.User;
 import fr.esgi.fyc.domain.repository.IPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,9 @@ public class PostService {
 
   public Post getById(int postId){ return  iPostRepository.selectPostById(postId); }
 
-  public List<Post> getByUser(int userId) { return iPostRepository.selectAllPostsByUser(userId); }
+  public List<Post> getAll(){ return  iPostRepository.selectAllPosts(); }
+
+  public List<Post> getByUser(User user) { return iPostRepository.selectAllPostsByUser(user); }
 
   public int deletePost(int postId) { return iPostRepository.deletePost(postId);}
 

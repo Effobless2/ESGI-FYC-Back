@@ -1,6 +1,7 @@
 package fr.esgi.fyc.infrastructure.persistence.DAO;
 
 import fr.esgi.fyc.domain.model.Post;
+import fr.esgi.fyc.domain.model.User;
 import fr.esgi.fyc.domain.repository.IPostRepository;
 import fr.esgi.fyc.infrastructure.persistence.parsers.PostRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class PostDAO extends JdbcDaoSupport implements IPostRepository {
         post.getTitle(),
         post.getContent(),
         post.getCreatedAt(),
-        post.getIdUser()
+        post.getUser().getId()
       );
 
       return getJdbcTemplate().queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
@@ -43,7 +44,7 @@ public class PostDAO extends JdbcDaoSupport implements IPostRepository {
 
   @Override
   public Post selectPostById(int id){
-    final String POST_GET_BY_ID = "SELECT id, title, content, created_at, id_user FROM posts AS p WHERE p.id = ?";
+    final String POST_GET_BY_ID = "SELECT p.id, p.title, p.content, p.created_at, p.id_user, u.email, u.lastName, u.firstName FROM posts AS p JOIN users AS u WHERE p.id_user = u.id AND p.id = ?";
     try{
       return getJdbcTemplate().queryForObject(POST_GET_BY_ID, new Object[]{id}, new PostRowMapper());
     }catch (EmptyResultDataAccessException e) {
@@ -53,9 +54,16 @@ public class PostDAO extends JdbcDaoSupport implements IPostRepository {
   }
 
   @Override
-  public List<Post> selectAllPostsByUser(int userId){
-    final String POST_GET_ALL_BY_USER = "SELECT id, title, content, created_at, id_user FROM posts AS p WHERE p.id_user = ?";
-    List<Post> posts = getJdbcTemplate().query(POST_GET_ALL_BY_USER, new Object[]{userId}, new PostRowMapper());
+  public List<Post> selectAllPosts(){
+    final String POST_GET_ALL= "SELECT p.id, p.title, p.content, p.created_at, p.id_user, u.email, u.lastName, u.firstName FROM posts AS p JOIN users AS u WHERE p.id_user = u.id";
+    List<Post> posts = getJdbcTemplate().query(POST_GET_ALL, new PostRowMapper());
+    return posts;
+  }
+
+  @Override
+  public List<Post> selectAllPostsByUser(User user){
+    final String POST_GET_ALL_BY_USER = "SELECT p.id, p.title, p.content, p.created_at, p.id_user, u.email, u.lastName, u.firstName FROM posts AS p JOIN users AS u WHERE p.id_user = u.id AND u.id = ?";
+    List<Post> posts = getJdbcTemplate().query(POST_GET_ALL_BY_USER, new Object[]{user.getId()}, new PostRowMapper());
     return posts;
   }
 
