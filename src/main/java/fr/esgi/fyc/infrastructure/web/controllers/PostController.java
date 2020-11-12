@@ -119,8 +119,8 @@ public class PostController {
     }
   }
 
-  @DeleteMapping("/")
-  public ResponseEntity<?> delete(HttpServletRequest request, @RequestBody PostDTO postDTO){
+  @DeleteMapping("/{postId}")
+  public ResponseEntity<?> delete(HttpServletRequest request, @PathVariable("postId") int postId){
     try{
       String token = jwtUtils.resolveToken(request);
       Boolean tokenIsvalidated = jwtUtils.validateToken(token);
@@ -134,7 +134,7 @@ public class PostController {
       int userId = jwtUtils.getUserId(token);
       User userModel = userService.getById(userId);
 
-      Post post = postService.getById(postDTO.getId());
+      Post post = postService.getById(postId);
       post.setUser(userModel);
 
       if(post == null){
