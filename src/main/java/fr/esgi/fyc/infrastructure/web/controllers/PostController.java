@@ -5,6 +5,7 @@ import fr.esgi.fyc.domain.model.User;
 import fr.esgi.fyc.domain.services.PostService;
 import fr.esgi.fyc.domain.services.UserService;
 import fr.esgi.fyc.infrastructure.web.DTO.PostDTO;
+import fr.esgi.fyc.infrastructure.web.DTO.UserGetDTO;
 import fr.esgi.fyc.infrastructure.web.Security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -69,6 +70,28 @@ public class PostController {
       return ResponseEntity
               .status(HttpStatus.CREATED)
               .body(id);
+
+    } catch (Exception e) {
+      return ResponseEntity
+              .status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body("ERROR : " + e.getMessage());
+    }
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<?> getById(HttpServletRequest request, @PathVariable("id") int id){
+    try{
+      Post postModel = postService.getById(id);
+
+      if(postModel == null) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("ERROR : Post not found");
+      }
+
+      return ResponseEntity
+              .status(HttpStatus.OK)
+              .body(postModel);
 
     } catch (Exception e) {
       return ResponseEntity
