@@ -68,6 +68,21 @@ public class PostDAO extends JdbcDaoSupport implements IPostRepository {
   }
 
   @Override
+  public int updatePost(Post post){
+    final String POST_UPDATE = "UPDATE posts AS p SET p.title = ?, p.content = ? WHERE p.id = ?";
+    try{
+      return getJdbcTemplate().update(POST_UPDATE,
+              post.getTitle(),
+              post.getContent(),
+              post.getId()
+      );
+    }catch (RuntimeException e) {
+      System.out.println("ERROR IN POSTDAO.UPDATE_POST : " + e);
+      return 0;
+    }
+  }
+
+  @Override
   public int deletePost(int postId){
     final String POST_DELETE = "DELETE FROM posts AS p WHERE p.id = ?";
     try{

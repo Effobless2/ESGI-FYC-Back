@@ -22,6 +22,8 @@ public class PostService {
 
   public List<Post> getByUser(User user) { return iPostRepository.selectAllPostsByUser(user); }
 
+  public int updatePost(Post post) { return  iPostRepository.updatePost(post); }
+
   public int deletePost(int postId) { return iPostRepository.deletePost(postId);}
 
 }

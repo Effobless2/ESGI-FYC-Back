@@ -4,8 +4,6 @@ import fr.esgi.fyc.domain.model.Post;
 import fr.esgi.fyc.domain.model.User;
 import fr.esgi.fyc.domain.services.PostService;
 import fr.esgi.fyc.domain.services.UserService;
-import fr.esgi.fyc.infrastructure.web.DTO.PostDTO;
-import fr.esgi.fyc.infrastructure.web.DTO.UserGetDTO;
 import fr.esgi.fyc.infrastructure.web.Security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -134,6 +131,54 @@ public class PostController {
       return ResponseEntity
               .status(HttpStatus.OK)
               .body(posts);
+
+    } catch (Exception e) {
+      return ResponseEntity
+              .status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body("ERROR : " + e.getMessage());
+    }
+  }
+
+  @PutMapping("/")
+  public ResponseEntity<?> update(HttpServletRequest request, @RequestBody Post post){
+    try{
+      String token = jwtUtils.resolveToken(request);
+      Boolean tokenIsvalidated = jwtUtils.validateToken(token);
+
+      if(!tokenIsvalidated){
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("ERROR : UNAUTHORIZED");
+      }
+
+      Post postInDB = postService.getById(post.getId());
+
+      if(postInDB == null){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("ERROR : Post not found");
+      }
+
+      int userId = jwtUtils.getUserId(token);
+      Boolean idIsMatche = postInDB.getUser().getId() == userId;
+
+      if(!idIsMatche){
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("ERROR : You are not the author of the post");
+      }
+
+      int nbPostModified = postService.updatePost(post);
+
+      if(nbPostModified == 0){
+        return ResponseEntity
+                .status(HttpStatus.NOT_MODIFIED)
+                .body("ERROR : Post not modified");
+      }
+
+      return ResponseEntity
+              .status(HttpStatus.OK)
+              .body(userId);
 
     } catch (Exception e) {
       return ResponseEntity

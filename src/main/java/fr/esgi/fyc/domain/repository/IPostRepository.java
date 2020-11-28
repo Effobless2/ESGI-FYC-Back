@@ -10,6 +10,7 @@ public interface IPostRepository {
   public Post selectPostById(int postId);
   public List<Post> selectAllPosts();
   public List<Post> selectAllPostsByUser(User user);
+  public int updatePost(Post post);
   public int deletePost(int postId);
 
 }
