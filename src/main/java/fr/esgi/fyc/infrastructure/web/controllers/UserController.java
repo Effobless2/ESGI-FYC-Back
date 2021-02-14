@@ -45,7 +45,10 @@ public class UserController {
                   user.getFirstName(),
                   user.getLastName(),
                   user.getEmail(),
-                  user.getRole());
+                  user.getRole(),
+                  0,
+                  false
+          );
           userService.add(userModel);
 
           int id = userService.getByEmail(user.getEmail()).getId();

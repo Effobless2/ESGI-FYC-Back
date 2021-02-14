@@ -36,12 +36,39 @@ public class AuthController {
           .body("Error : User not found");
       }
 
+      if(user.getIsBlocked()){
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body("Error : User blocked");
+      }
+
       Boolean passwordIsMatche = bCryptPasswordEncoder.matches(authDTO.getPassword(), user.getPassword());
 
       if (!passwordIsMatche){
+
+        if(user.getNbTestLogin() >= 2){
+
+          user.setNbTestLogin(user.getNbTestLogin() + 1);
+          user.setIsBlocked(true);
+          userService.updateUser(user);
+
+          return ResponseEntity
+                  .status(HttpStatus.FORBIDDEN)
+                  .body("Error : User blocked");
+        }
+
+        user.setNbTestLogin(user.getNbTestLogin() + 1);
+        userService.updateUser(user);
+
+
         return ResponseEntity
           .status(HttpStatus.UNAUTHORIZED)
           .body("Error : Incorrect password");
+      }
+
+      if(user.getNbTestLogin() > 0){
+        user.setNbTestLogin(0);
+        userService.updateUser(user);
       }
 
       String token = jwtUtils.generateToken(user);

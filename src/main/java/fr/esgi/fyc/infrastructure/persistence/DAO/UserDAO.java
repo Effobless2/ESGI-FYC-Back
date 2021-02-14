@@ -27,14 +27,16 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
     @Override
     public int saveUser(User user) {
       try{
-        final String USER_INSERT = "INSERT INTO users (password, firstName, lastName, email, role) values (?,?,?,?,?)";
+        final String USER_INSERT = "INSERT INTO users (password, firstName, lastName, email, role, nbTestLogin, isBlocked) values (?,?,?,?,?)";
 
         getJdbcTemplate().update(USER_INSERT,
                 user.getPassword(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
-                user.getRole()
+                user.getRole(),
+                0,
+                false
         );
         return getJdbcTemplate().queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
 
@@ -66,7 +68,7 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
 
     @Override
     public User selectUserByEmail(String email){
-        final String USER_GET_BY_EMAIL = "SELECT id, firstName, lastName, email, password, role FROM users AS u WHERE u.email = ?";
+        final String USER_GET_BY_EMAIL = "SELECT id, firstName, lastName, email, password, role, nbTestLogin, isBlocked FROM users AS u WHERE u.email = ?";
         try{
             return getJdbcTemplate().queryForObject(USER_GET_BY_EMAIL, new Object[]{email}, new UserRowMapper());
         }catch (EmptyResultDataAccessException e) {
@@ -77,12 +79,14 @@ public class UserDAO extends JdbcDaoSupport implements IUserRepository {
 
     @Override
     public int updateUser(User user){
-        final String USER_UPDATE = "UPDATE users AS u SET u.firstName = ?, u.lastName = ?, u.role = ? WHERE u.id = ?";
+        final String USER_UPDATE = "UPDATE users AS u SET u.firstName = ?, u.lastName = ?, u.role = ?, u.nbTestLogin = ?, u.isBlocked = ? WHERE u.id = ?";
         try{
             return getJdbcTemplate().update(USER_UPDATE,
                     user.getFirstName(),
                     user.getLastName(),
                     user.getRole(),
+                    user.getNbTestLogin(),
+                    user.getIsBlocked(),
                     user.getId()
             );
         }catch (RuntimeException e) {

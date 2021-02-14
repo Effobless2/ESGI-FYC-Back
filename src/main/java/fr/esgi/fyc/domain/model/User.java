@@ -8,14 +8,18 @@ public class User {
     private String lastName;
     private String email;
     private String role;
+    private int nbTestLogin;
+    private boolean isBlocked;
 
-    public User(int id, String password, String firstName, String lastName, String email, String role) {
+    public User(int id, String password, String firstName, String lastName, String email, String role, int nbTestLogin, boolean isBlocked) {
         this.id = id;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.role = role;
+        this.nbTestLogin = nbTestLogin;
+        this.isBlocked = isBlocked;
     }
 
     public User(){}
@@ -67,4 +71,23 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public int getNbTestLogin(){
+        return nbTestLogin;
+    }
+
+    public void setNbTestLogin(int nbTestLogin){
+        this.nbTestLogin = nbTestLogin;
+    }
+
+    public boolean getIsBlocked(){
+        return isBlocked;
+    }
+
+    public void setIsBlocked(boolean isBlocked){
+        this.isBlocked = isBlocked;
+    }
+
+
+
 }
